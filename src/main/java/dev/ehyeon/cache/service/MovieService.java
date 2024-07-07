@@ -6,11 +6,16 @@ import dev.ehyeon.cache.repository.MovieJpaRepository;
 import dev.ehyeon.cache.response.SearchMovieResponse;
 import jakarta.annotation.PostConstruct;
 import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
+@Slf4j
 @Service
 @Transactional
 @AllArgsConstructor
@@ -31,6 +36,7 @@ public class MovieService {
     }
 
     @Transactional(readOnly = true)
+    @Cacheable(value = "searchTop3")
     public List<SearchMovieResponse> searchTop3() {
         List<MovieEntity> foundMovieEntities = movieJpaRepository.findTop3ByOrderByViewsDesc();
 
@@ -40,6 +46,12 @@ public class MovieService {
                         movieEntity.getTitle(),
                         movieEntity.getViews()))
                 .toList();
+    }
+
+    @Scheduled(cron = "*/30 * * * * *")
+    @CacheEvict(value = "searchTop3", allEntries = true)
+    public void evictCache() {
+        log.info("MovieService: evict searchTop3 cache");
     }
 
     @PostConstruct
