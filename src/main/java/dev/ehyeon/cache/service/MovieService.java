@@ -64,15 +64,7 @@ public class MovieService {
 
     @Transactional(readOnly = true)
     public List<SearchMovieResponse> searchTop3ByLikes() {
-        List<MovieEntity> foundMovieEntities = movieJpaRepository.findOrderByLikesDesc(PageRequest.of(0, 3));
-
-        return foundMovieEntities.stream()
-                .map(movieEntity -> new SearchMovieResponse(
-                        movieEntity.getId(),
-                        movieEntity.getTitle(),
-                        movieEntity.getViews(),
-                        movieEntity.getMovieLikeEntities().size()))
-                .toList();
+        return movieJpaRepository.findOrderByLikesDesc(PageRequest.of(0, 3));
     }
 
     public void checkLike(long userId, long movieId) {
