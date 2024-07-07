@@ -1,6 +1,6 @@
 package dev.ehyeon.cache.controller;
 
-import dev.ehyeon.cache.exception.MovieNotFoundException;
+import dev.ehyeon.cache.exception.CustomException;
 import dev.ehyeon.cache.response.SearchMovieResponse;
 import dev.ehyeon.cache.service.MovieService;
 import lombok.AllArgsConstructor;
@@ -42,8 +42,8 @@ public class MovieController {
         return movieService.searchTop3();
     }
 
-    @ExceptionHandler(MovieNotFoundException.class)
-    public ResponseEntity<?> handleMovieNotFoundException(MovieNotFoundException exception) {
-        return ResponseEntity.notFound().build();
+    @ExceptionHandler(CustomException.class)
+    public ResponseEntity<?> handleCustomException(CustomException exception) {
+        return ResponseEntity.status(exception.getHttpStatus()).body(exception.getMessage());
     }
 }

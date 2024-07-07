@@ -1,4 +1,10 @@
 package dev.ehyeon.cache.exception;
 
-public class UserNotFoundException extends RuntimeException {
+import org.springframework.http.HttpStatus;
+
+public class UserNotFoundException extends CustomException {
+
+    public UserNotFoundException() {
+        super("UserNotFound", HttpStatus.NOT_FOUND);
+    }
 }

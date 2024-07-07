@@ -1,4 +1,10 @@
 package dev.ehyeon.cache.exception;
 
-public class MovieNotFoundException extends RuntimeException {
+import org.springframework.http.HttpStatus;
+
+public class MovieNotFoundException extends CustomException {
+
+    public MovieNotFoundException() {
+        super("MovieNotFound", HttpStatus.NOT_FOUND);
+    }
 }

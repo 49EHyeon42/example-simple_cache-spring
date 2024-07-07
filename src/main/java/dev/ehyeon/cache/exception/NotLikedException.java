@@ -1,4 +1,10 @@
 package dev.ehyeon.cache.exception;
 
-public class NotLikedException extends RuntimeException {
+import org.springframework.http.HttpStatus;
+
+public class NotLikedException extends CustomException {
+
+    public NotLikedException() {
+        super("NotLiked", HttpStatus.BAD_REQUEST);
+    }
 }
