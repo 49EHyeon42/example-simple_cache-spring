@@ -42,6 +42,11 @@ public class MovieController {
         return movieService.searchTop3();
     }
 
+    @GetMapping("/ranking/likes")
+    public List<SearchMovieResponse> searchTop3ByLikes() {
+        return movieService.searchTop3ByLikes();
+    }
+
     @ExceptionHandler(CustomException.class)
     public ResponseEntity<?> handleCustomException(CustomException exception) {
         return ResponseEntity.status(exception.getHttpStatus()).body(exception.getMessage());

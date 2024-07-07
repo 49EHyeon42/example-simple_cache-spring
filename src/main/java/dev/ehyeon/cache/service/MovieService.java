@@ -16,6 +16,7 @@ import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -32,6 +33,8 @@ public class MovieService {
     private final MovieLikeJpaRepository movieLikeJpaRepository;
     private final UserJpaRepository userJpaRepository;
 
+    // fixme: 1+N 문제 발생
+
     public SearchMovieResponse searchById(long id) {
         MovieEntity foundMovieEntity = movieJpaRepository.findById(id)
                 .orElseThrow(MovieNotFoundException::new);
@@ -41,7 +44,8 @@ public class MovieService {
         return new SearchMovieResponse(
                 foundMovieEntity.getId(),
                 foundMovieEntity.getTitle(),
-                foundMovieEntity.getViews());
+                foundMovieEntity.getViews(),
+                foundMovieEntity.getMovieLikeEntities().size());
     }
 
     @Transactional(readOnly = true)
@@ -53,7 +57,21 @@ public class MovieService {
                 .map(movieEntity -> new SearchMovieResponse(
                         movieEntity.getId(),
                         movieEntity.getTitle(),
-                        movieEntity.getViews()))
+                        movieEntity.getViews(),
+                        movieEntity.getMovieLikeEntities().size()))
+                .toList();
+    }
+
+    @Transactional(readOnly = true)
+    public List<SearchMovieResponse> searchTop3ByLikes() {
+        List<MovieEntity> foundMovieEntities = movieJpaRepository.findOrderByLikesDesc(PageRequest.of(0, 3));
+
+        return foundMovieEntities.stream()
+                .map(movieEntity -> new SearchMovieResponse(
+                        movieEntity.getId(),
+                        movieEntity.getTitle(),
+                        movieEntity.getViews(),
+                        movieEntity.getMovieLikeEntities().size()))
                 .toList();
     }
 
