@@ -51,15 +51,7 @@ public class MovieService {
     @Transactional(readOnly = true)
     @Cacheable(value = "searchTop3")
     public List<SearchMovieResponse> searchTop3() {
-        List<MovieEntity> foundMovieEntities = movieJpaRepository.findTop3ByOrderByViewsDesc();
-
-        return foundMovieEntities.stream()
-                .map(movieEntity -> new SearchMovieResponse(
-                        movieEntity.getId(),
-                        movieEntity.getTitle(),
-                        movieEntity.getViews(),
-                        movieEntity.getMovieLikeEntities().size()))
-                .toList();
+        return movieJpaRepository.findOrderByViewsDesc(PageRequest.of(0, 3));
     }
 
     @Transactional(readOnly = true)
