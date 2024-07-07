@@ -15,6 +15,6 @@ public interface MovieJpaRepository extends JpaRepository<MovieEntity, Long> {
 
     @Query("SELECT new dev.ehyeon.cache.response.SearchMovieResponse(m.id, m.title, m.views, SIZE(m.movieLikeEntities)) " +
             "FROM MovieEntity m " +
-            "ORDER BY m.views DESC, m.id DESC")
+            "ORDER BY SIZE(m.movieLikeEntities) DESC, m.id DESC")
     List<SearchMovieResponse> findOrderByLikesDesc(Pageable pageable);
 }
