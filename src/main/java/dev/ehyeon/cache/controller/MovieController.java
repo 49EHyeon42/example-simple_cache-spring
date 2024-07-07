@@ -37,8 +37,8 @@ public class MovieController {
         return ResponseEntity.ok().build();
     }
 
-    @GetMapping("/top-3")
-    public List<SearchMovieResponse> searchAllTop3() {
+    @GetMapping("/ranking/views")
+    public List<SearchMovieResponse> searchTop3ByViews() {
         return movieService.searchTop3ByViews();
     }
 
