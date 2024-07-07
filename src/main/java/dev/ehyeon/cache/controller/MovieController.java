@@ -39,7 +39,7 @@ public class MovieController {
 
     @GetMapping("/top-3")
     public List<SearchMovieResponse> searchAllTop3() {
-        return movieService.searchTop3();
+        return movieService.searchTop3ByViews();
     }
 
     @GetMapping("/ranking/likes")

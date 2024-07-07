@@ -49,8 +49,8 @@ public class MovieService {
     }
 
     @Transactional(readOnly = true)
-    @Cacheable(value = "searchTop3")
-    public List<SearchMovieResponse> searchTop3() {
+    @Cacheable(value = "searchTop3ByViews")
+    public List<SearchMovieResponse> searchTop3ByViews() {
         return movieJpaRepository.findOrderByViewsDesc(PageRequest.of(0, 3));
     }
 
@@ -87,9 +87,9 @@ public class MovieService {
     }
 
     @Scheduled(cron = "*/30 * * * * *")
-    @CacheEvict(value = "searchTop3", allEntries = true)
+    @CacheEvict(value = "searchTop3ByViews", allEntries = true)
     public void evictCache() {
-        log.info("MovieService: evict searchTop3 cache");
+        log.info("MovieService: evict searchTop3ByViews cache");
     }
 
     @PostConstruct
