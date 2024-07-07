@@ -1,3 +1,7 @@
+scheduled:
+  cron:
+    searchTop3ByViews: "*/30 * * * * *"
+    searchTop3ByLikes: "*/30 * * * * *"
 spring:
   application:
     name: cache

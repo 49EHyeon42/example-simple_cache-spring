@@ -85,13 +85,13 @@ public class MovieService {
         movieLikeJpaRepository.delete(foundMovieLikeEntity);
     }
 
-    @Scheduled(cron = "*/30 * * * * *")
+    @Scheduled(cron = "${scheduled.cron.searchTop3ByViews}")
     @CacheEvict(value = "searchTop3ByViews", allEntries = true)
     public void evictSearchTop3ByViewsCache() {
         log.info("MovieService: evict searchTop3ByViews cache");
     }
 
-    @Scheduled(cron = "*/30 * * * * *")
+    @Scheduled(cron = "${scheduled.cron.searchTop3ByLikes}")
     @CacheEvict(value = "searchTop3ByLikes", allEntries = true)
     public void evictSearchTop3ByLikesCache() {
         log.info("MovieService: evict searchTop3ByLikes cache");
