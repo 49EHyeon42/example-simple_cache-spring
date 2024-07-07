@@ -33,8 +33,6 @@ public class MovieService {
     private final MovieLikeJpaRepository movieLikeJpaRepository;
     private final UserJpaRepository userJpaRepository;
 
-    // fixme: 1+N 문제 발생
-
     public SearchMovieResponse searchById(long id) {
         MovieEntity foundMovieEntity = movieJpaRepository.findById(id)
                 .orElseThrow(MovieNotFoundException::new);
@@ -55,6 +53,7 @@ public class MovieService {
     }
 
     @Transactional(readOnly = true)
+    @Cacheable(value = "searchTop3ByLikes")
     public List<SearchMovieResponse> searchTop3ByLikes() {
         return movieJpaRepository.findOrderByLikesDesc(PageRequest.of(0, 3));
     }
@@ -88,8 +87,14 @@ public class MovieService {
 
     @Scheduled(cron = "*/30 * * * * *")
     @CacheEvict(value = "searchTop3ByViews", allEntries = true)
-    public void evictCache() {
+    public void evictSearchTop3ByViewsCache() {
         log.info("MovieService: evict searchTop3ByViews cache");
+    }
+
+    @Scheduled(cron = "*/30 * * * * *")
+    @CacheEvict(value = "searchTop3ByLikes", allEntries = true)
+    public void evictSearchTop3ByLikesCache() {
+        log.info("MovieService: evict searchTop3ByLikes cache");
     }
 
     @PostConstruct
