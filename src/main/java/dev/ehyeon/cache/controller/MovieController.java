@@ -21,6 +21,22 @@ public class MovieController {
         return movieService.searchById(id);
     }
 
+    @PostMapping("/{id}/like")
+    public ResponseEntity<Void> checkLike(@PathVariable("id") Long movieId) {
+        // 테스트이기 때문에 1로 고정
+        movieService.checkLike(1, movieId);
+
+        return ResponseEntity.ok().build();
+    }
+
+    @DeleteMapping("/{id}/like")
+    public ResponseEntity<Void> uncheckLike(@PathVariable("id") Long movieId) {
+        // 테스트이기 때문에 1로 고정
+        movieService.uncheckLike(1, movieId);
+
+        return ResponseEntity.ok().build();
+    }
+
     @GetMapping("/top-3")
     public List<SearchMovieResponse> searchAllTop3() {
         return movieService.searchTop3();

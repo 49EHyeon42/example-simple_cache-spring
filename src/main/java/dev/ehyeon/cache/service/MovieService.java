@@ -1,8 +1,15 @@
 package dev.ehyeon.cache.service;
 
 import dev.ehyeon.cache.entity.MovieEntity;
+import dev.ehyeon.cache.entity.MovieLikeEntity;
+import dev.ehyeon.cache.entity.UserEntity;
+import dev.ehyeon.cache.exception.AlreadyLikedException;
 import dev.ehyeon.cache.exception.MovieNotFoundException;
+import dev.ehyeon.cache.exception.NotLikedException;
+import dev.ehyeon.cache.exception.UserNotFoundException;
 import dev.ehyeon.cache.repository.MovieJpaRepository;
+import dev.ehyeon.cache.repository.MovieLikeJpaRepository;
+import dev.ehyeon.cache.repository.UserJpaRepository;
 import dev.ehyeon.cache.response.SearchMovieResponse;
 import jakarta.annotation.PostConstruct;
 import lombok.AllArgsConstructor;
@@ -22,6 +29,8 @@ import java.util.List;
 public class MovieService {
 
     private final MovieJpaRepository movieJpaRepository;
+    private final MovieLikeJpaRepository movieLikeJpaRepository;
+    private final UserJpaRepository userJpaRepository;
 
     public SearchMovieResponse searchById(long id) {
         MovieEntity foundMovieEntity = movieJpaRepository.findById(id)
@@ -46,6 +55,33 @@ public class MovieService {
                         movieEntity.getTitle(),
                         movieEntity.getViews()))
                 .toList();
+    }
+
+    public void checkLike(long userId, long movieId) {
+        UserEntity foundUserEntity = userJpaRepository.findById(userId)
+                .orElseThrow(UserNotFoundException::new);
+
+        MovieEntity foundMovieEntity = movieJpaRepository.findById(movieId)
+                .orElseThrow(MovieNotFoundException::new);
+
+        if (movieLikeJpaRepository.existsByUserEntityAndMovieEntity(foundUserEntity, foundMovieEntity)) {
+            throw new AlreadyLikedException();
+        }
+
+        movieLikeJpaRepository.save(new MovieLikeEntity(foundUserEntity, foundMovieEntity));
+    }
+
+    public void uncheckLike(long userId, long movieId) {
+        UserEntity foundUserEntity = userJpaRepository.findById(userId)
+                .orElseThrow(UserNotFoundException::new);
+
+        MovieEntity foundMovieEntity = movieJpaRepository.findById(movieId)
+                .orElseThrow(MovieNotFoundException::new);
+
+        MovieLikeEntity foundMovieLikeEntity = movieLikeJpaRepository.findByUserEntityAndMovieEntity(foundUserEntity, foundMovieEntity)
+                .orElseThrow(NotLikedException::new);
+
+        movieLikeJpaRepository.delete(foundMovieLikeEntity);
     }
 
     @Scheduled(cron = "*/30 * * * * *")
